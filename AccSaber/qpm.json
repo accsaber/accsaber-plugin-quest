@@ -1,34 +1,45 @@
 {
-	"sharedDir": "shared",
-	"dependenciesDir": "extern",
-	"info": {
-		"name": "AccSaber",
-		"id": "accsaber",
-		"version": "0.1.0",
-		"url": null,
-		"additionalData": {
-			"overrideSoName": "libaccsaber.so"
-		}
-	},
-	"dependencies": [
-		{
-			"id": "beatsaber-hook",
-			"versionRange": "=2.3.2",
-			"additionalData": {
-				"extraFiles": [
-					"src/inline-hook"
-				]
-			}
-		},
-		{
-			"id": "modloader",
-			"versionRange": "=1.2.3",
-			"additionalData": {
-				
-			}
-		}
-	],
-	"additionalData": {
-		
-	}
+  "sharedDir": "shared",
+  "dependenciesDir": "extern",
+  "info": {
+    "name": "AccSaber",
+    "id": "accsaber",
+    "version": "0.1.0",
+    "url": null,
+    "additionalData": {
+      "overrideSoName": "libAccSaber.so"
+    }
+  },
+  "dependencies": [
+    {
+      "id": "beatsaber-hook",
+      "versionRange": "^3.0.0",
+      "additionalData": {
+        "extraFiles": [
+          "src/inline-hook"
+        ]
+      }
+    },
+    {
+      "id": "modloader",
+      "versionRange": "^1.2.3",
+      "additionalData": {}
+    },
+    {
+      "id": "codegen",
+      "versionRange": "^0.22.0",
+      "additionalData": {}
+    },
+    {
+      "id": "questui",
+      "versionRange": "^0.13.5",
+      "additionalData": {}
+    },
+    {
+      "id": "questui_components",
+      "versionRange": "^2.5.0",
+      "additionalData": {}
+    }
+  ],
+  "additionalData": {}
 }

@@ -6,7 +6,7 @@
 	"author": "AccSaber Dev Team",
 	"version": "0.1.0",
 	"packageId": "com.beatgames.beatsaber",
-	"packageVersion": "1.17.1",
+	"packageVersion": "1.21.0",
 	"description": "Lets you view the AccSaber leaderboards in game",
 	"dependencies": [],
 	"modFiles": [
