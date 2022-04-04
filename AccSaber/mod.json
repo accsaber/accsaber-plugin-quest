@@ -1,0 +1,19 @@
+{
+	"$schema": "https://raw.githubusercontent.com/Lauriethefish/QuestPatcher.QMod/main/QuestPatcher.QMod/Resources/qmod.schema.json",
+	"_QPVersion": "0.1.1",
+	"name": "AccSaber",
+	"id": "accsaber",
+	"author": "AccSaber Dev Team",
+	"version": "0.1.0",
+	"packageId": "com.beatgames.beatsaber",
+	"packageVersion": "1.17.1",
+	"description": "Lets you view the AccSaber leaderboards in game",
+	"dependencies": [],
+	"modFiles": [
+		"libaccsaber.so"
+	],
+	"libraryFiles": [
+		"libbeatsaber-hook_2_3_2.so"
+	],
+	"fileCopies": []
+}
