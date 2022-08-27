@@ -27,17 +27,22 @@
     },
     {
       "id": "codegen",
-      "versionRange": "^0.22.0",
+      "versionRange": "^0.25.0",
       "additionalData": {}
     },
     {
       "id": "questui",
-      "versionRange": "^0.13.5",
+      "versionRange": "^0.16.4",
       "additionalData": {}
     },
     {
-      "id": "questui_components",
-      "versionRange": "^2.5.0",
+      "id": "bsml",
+      "versionRange": "^0.1.7",
+      "additionalData": {}
+    },
+    {
+      "id": "paper",
+      "versionRange": "^1.2.9",
       "additionalData": {}
     }
   ],
