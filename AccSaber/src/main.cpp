@@ -5,6 +5,7 @@
 #include "questui/shared/QuestUI.hpp"
 #include "leaderboardcore/shared/LeaderboardCore.hpp"
 #include "UI/Leaderboard/AccSaberCustomLeaderboard.hpp"
+#include "logging.hpp"
 
 static ModInfo modInfo; // Stores the ID and version of our mod, and is sent to the modloader upon startup
 AccSaber::UI::Leaderboard::CustomLeaderboard leaderboard;

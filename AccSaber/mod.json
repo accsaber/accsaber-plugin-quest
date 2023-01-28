@@ -1,19 +1,40 @@
 {
-	"$schema": "https://raw.githubusercontent.com/Lauriethefish/QuestPatcher.QMod/main/QuestPatcher.QMod/Resources/qmod.schema.json",
-	"_QPVersion": "0.1.1",
-	"name": "AccSaber",
-	"id": "accsaber",
-	"author": "AccSaber Dev Team",
-	"version": "0.1.0",
-	"packageId": "com.beatgames.beatsaber",
-	"packageVersion": "1.21.0",
-	"description": "Lets you view the AccSaber leaderboards in game",
-	"dependencies": [],
-	"modFiles": [
-		"libaccsaber.so"
-	],
-	"libraryFiles": [
-		"libbeatsaber-hook_2_3_2.so"
-	],
-	"fileCopies": []
+  "_QPVersion": "0.1.1",
+  "name": "AccSaber",
+  "id": "accsaber",
+  "author": "AccSaber Dev Team",
+  "version": "0.1.0",
+  "packageId": "com.beatgames.beatsaber",
+  "packageVersion": "1.24.0",
+  "description": "Lets you view the AccSaber leaderboards in game",
+  "dependencies": [
+    {
+      "version": "^1.2.9",
+      "id": "paper",
+      "downloadIfMissing": "https://github.com/Fernthedev/paperlog/releases/download/v1.2.9/paperlog.qmod"
+    },
+    {
+      "version": "^0.1.7",
+      "id": "bsml",
+      "downloadIfMissing": "https://github.com/RedBrumbler/Quest-BSML/releases/download/v0.1.7/BSML.qmod"
+    },
+    {
+      "version": "^0.25.0",
+      "id": "codegen",
+      "downloadIfMissing": "https://github.com/sc2ad/BeatSaber-Quest-Codegen/releases/download/v0.25.0/Codegen.qmod"
+    },
+    {
+      "version": "^0.16.4",
+      "id": "questui",
+      "downloadIfMissing": "https://github.com/darknight1050/QuestUI/releases/download/v0.16.4/QuestUI.qmod"
+    }
+  ],
+  "modFiles": [
+    "libAccSaber.so"
+  ],
+  "libraryFiles": [
+    "libbeatsaber-hook_3_12_0.so"
+  ],
+  "fileCopies": [],
+  "copyExtensions": []
 }

@@ -49,6 +49,11 @@
       "id": "custom-types",
       "versionRange": "^0.15.22",
       "additionalData": {}
+    },
+    {
+      "id": "paper",
+      "versionRange": "^1.2.9",
+      "additionalData": {}
     }
   ],
   "additionalData": {}
