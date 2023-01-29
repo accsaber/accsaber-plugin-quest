@@ -14,7 +14,7 @@
 DECLARE_CLASS_CODEGEN(AccSaber::UI::Leaderboard, AccSaberPanel, HMUI::ViewController,
     DECLARE_OVERRIDE_METHOD(void, DidActivate, il2cpp_utils::il2cpp_type_check::MetadataGetter<&HMUI::ViewController::DidActivate>::get(), bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling);
     DECLARE_INSTANCE_FIELD(UnityEngine::UI::HorizontalLayoutGroup*, container);
-    DECLARE_INSTANCE_FIELD(BSML::ClickableImage*, accsaber_logo);
+    DECLARE_INSTANCE_FIELD(HMUI::ImageView*, accsaber_logo);
     DECLARE_INSTANCE_FIELD(HMUI::ImageView*, separator);
     DECLARE_INSTANCE_METHOD(void, PostParse);
     DECLARE_INSTANCE_FIELD(TMPro::TextMeshProUGUI*, global_rank_text);

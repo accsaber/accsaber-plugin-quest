@@ -33,6 +33,12 @@ extern "C" void setup(ModInfo& info) {
     getLogger().info("Completed setup!");
 }
 
+void LeaderboardSet(GlobalNamespace::IDifficultyBeatmap* difficultyBeatmap){
+    leaderboard.currentDifficultyBeatmap = difficultyBeatmap;
+    auto vc = leaderboard.get_leaderboardViewController();
+    if (vc && vc->isActivated) vc->onLeaderboardSet(difficultyBeatmap);
+}
+
 // Called later on in the game loading - a good time to install function hooks
 extern "C" void load() {
     il2cpp_functions::Init();
@@ -43,11 +49,7 @@ extern "C" void load() {
     // Install our hooks (none defined yet)
     getLogger().info("Installed all hooks!");
     
-    LeaderboardCore::Events::NotifyLeaderboardSet() += [](GlobalNamespace::IDifficultyBeatmap* difficultyBeatmap){
-        leaderboard.currentDifficultyBeatmap = difficultyBeatmap;
-        auto vc = leaderboard.get_leaderboardViewController();
-        if (vc && vc->isActivated) vc->onLeaderboardSet(difficultyBeatmap);
-    };
+    LeaderboardCore::Events::NotifyLeaderboardSet() += LeaderboardSet;
 }
 
 BSML_DATACACHE(accsaber_png) {
@@ -64,4 +66,8 @@ BSML_DATACACHE(carat_png) {
 
 BSML_DATACACHE(download_png) {
     return IncludedAssets::download_png;
+}
+
+BSML_DATACACHE(info_png) {
+    return IncludedAssets::info_png;
 }

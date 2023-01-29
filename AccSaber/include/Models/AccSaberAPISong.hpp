@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "GlobalNamespace/IDifficultyBeatmap.hpp"
+#include <optional>
 
 namespace AccSaber::Models{
     class AccSaberAPISong {
@@ -28,5 +29,6 @@ namespace AccSaber::Models{
                     {}
             AccSaberAPISong();
             static float GetComplexityForBeatmap(GlobalNamespace::IDifficultyBeatmap* difficultyBeatmap);
+            static std::optional<AccSaberAPISong> GetDataForBeatmap(GlobalNamespace::IDifficultyBeatmap* difficultyBeatmap);
     };
 }

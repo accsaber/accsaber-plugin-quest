@@ -6,34 +6,18 @@
 #include "Utils/WebRequest.hpp"
 #include "GlobalNamespace/BeatmapDifficulty.hpp"
 #include "beatsaber-hook/shared/config/config-utils.hpp"
+#include "Utils/MapUtils.hpp"
 #include "main.hpp"
 
 using namespace rapidjson;
 using namespace GlobalNamespace;
 
 namespace AccSaber::Downloaders{
-
-    std::string GetDifficultyString(GlobalNamespace::BeatmapDifficulty diff){
-        switch (diff){
-            case GlobalNamespace::BeatmapDifficulty::Easy:
-                return "Easy";
-            case GlobalNamespace::BeatmapDifficulty::Normal:
-                return "Normal";
-            case GlobalNamespace::BeatmapDifficulty::Hard:
-                return "Hard";
-            case GlobalNamespace::BeatmapDifficulty::Expert:
-                return "Expert";
-            case GlobalNamespace::BeatmapDifficulty::ExpertPlus:
-                return "ExpertPlus";
-            default: return "";
-        }
-    }
-
     void DownloadLeaderboardAsync(GlobalNamespace::IDifficultyBeatmap* beatmap, int page, std::function<void(std::optional<std::vector<Models::AccSaberLeaderboardEntry>>)> callback){
         std::string beatmapString;
         std::string URL;
         std::string hash = static_cast<std::string>(beatmap->get_level()->i_IPreviewBeatmapLevel()->get_levelID()).substr(13);
-        std::string difficulty = GetDifficultyString(beatmap->get_difficulty());
+        std::string difficulty = Utils::GetDifficultyName(beatmap->get_difficulty());
         std::string characteristic = beatmap->get_parentDifficultyBeatmapSet()->get_beatmapCharacteristic()->serializedName;
         beatmapString = string_format("%s/%s/%s", hash.c_str(), characteristic.c_str(), difficulty.c_str());
 

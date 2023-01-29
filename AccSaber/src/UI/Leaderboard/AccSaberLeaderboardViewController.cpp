@@ -19,6 +19,9 @@
 #include "GlobalNamespace/LeaderboardTableCell.hpp"
 #include "Models/AccSaberAPISong.hpp"
 #include "Downloaders/AccSaberDownloader.hpp"
+#include "bsml/shared/BSML/Components/ButtonIconImage.hpp"
+#include "logging.hpp"
+#include "Utils/StringUtils.hpp"
 
 using namespace QuestUI;
 using namespace QuestUI::BeatSaberUI;
@@ -51,7 +54,12 @@ namespace AccSaber::UI::Leaderboard
             IconSegmentedControl::DataItem::New_ctor(LoadSpriteRaw(IncludedAssets::Player_png), "Around You")
         });
         scopeSegmentedControl->SetData(array);
-        CreateLoadingControl();
+        GetComponentsInChildren<VerticalLayoutGroup*>().First([](auto& v){return v->get_spacing()==-19.4f;})
+            ->GetComponentsInChildren<BSML::ButtonIconImage*>(true).copy_to(timePlayedButtons);
+        for (auto& icon : timePlayedButtons){
+            icon->image->get_rectTransform()->set_localScale({2.5f, 2.5f, 0.0f});
+            icon->image->set_raycastTarget(false);
+        }
     }
 
     void AccSaberLeaderboardViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -93,20 +101,6 @@ namespace AccSaber::UI::Leaderboard
         }
     }
 
-    void SetErrorState(LoadingControl* loadingControl, std::string errorText, bool showRefreshButton = false)
-    {
-        loadingControl->Hide();
-        loadingControl->ShowText("literallyunalivemenow", false);
-        loadingControl->ShowText(errorText, showRefreshButton);
-    }
-
-    void LoadingControl_ShowLoading(LoadingControl* loadingControl){
-        loadingControl->get_gameObject()->set_active(true);
-        loadingControl->loadingContainer->SetActive(true);
-        loadingControl->refreshContainer->SetActive(false);
-        loadingControl->refreshText->SetText("");
-    }
-
     void AccSaberLeaderboardViewController::OnIconSelected(IconSegmentedControl* segmentedControl, int index){
         _lastScopeIndex = index;
         ChangeScope();
@@ -126,8 +120,7 @@ namespace AccSaber::UI::Leaderboard
 
     void AccSaberLeaderboardViewController::onLeaderboardSet(IDifficultyBeatmap* difficultyBeatmap){
         auto* view = leaderboardTableView->get_transform()->GetComponentInChildren<LeaderboardTableView*>();
-        auto* loadingControl = leaderboardTableView->GetComponent<LoadingControl*>();
-        this->RefreshLeaderboard(difficultyBeatmap, view, 0, loadingControl, System::Guid::NewGuid().ToString());
+        this->RefreshLeaderboard(difficultyBeatmap, view, 0, System::Guid::NewGuid().ToString());
     }
 
     List<LeaderboardTableView::ScoreData*>* CreateLeaderboardData(std::vector<Models::AccSaberLeaderboardEntry> leaderboard){
@@ -142,16 +135,24 @@ namespace AccSaber::UI::Leaderboard
         }
     }
 
+    void AccSaberLeaderboardViewController::SetLoading(bool value, std::string error){
+        leaderboard_loading->set_active(value);
+        errorText->get_gameObject()->set_active(!value && error != "");
+        if (error == "") return;
+        errorText->SetText("blah");
+        errorText->SetText(error);
+    }
+
     void AccSaberLeaderboardViewController::RefreshLeaderboard(IDifficultyBeatmap* difficultyBeatmap, LeaderboardTableView* tableView,
-        PlatformLeaderboardsModel::ScoresScope scope, LoadingControl* loadingControl, std::string refreshId) 
+        PlatformLeaderboardsModel::ScoresScope scope, std::string refreshId) 
     {
         if (!this->isActivated) return;
         tableView->tableView->SetDataSource(nullptr, true);
-        LoadingControl_ShowLoading(loadingControl);
-
+        SetLoading(true);
+        for (auto& button : timePlayedButtons) button->get_gameObject()->set_active(false);
         _currentLeaderboardRefreshId = refreshId;
 
-        std::thread t([difficultyBeatmap, scope, loadingControl, tableView, refreshId, this] {
+        std::thread t([difficultyBeatmap, scope, tableView, refreshId, this] {
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             if (_currentLeaderboardRefreshId != refreshId) return;
             Downloaders::DownloadLeaderboardAsync(difficultyBeatmap, _leaderboardPage, [=](std::optional<std::vector<Models::AccSaberLeaderboardEntry>> leaderboardData){
@@ -161,13 +162,25 @@ namespace AccSaber::UI::Leaderboard
                         if (leaderboardData.value().size() != 0) {   
                             tableView->SetScores(CreateLeaderboardData(leaderboardData.value()), -1);
                             RichMyText(tableView);
-                            loadingControl->ShowText(System::String::_get_Empty(), false);
+                            SetLoading(false);
                             leaderboard.get_panelViewController()->set_color(leaderboardData.value()[0].categoryName);
+                            for (int i=0; i<leaderboardData.value().size(); i++){
+                                std::string formattedDate = Utils::TimeStampToDateString(leaderboardData.value()[i].timeSet);
+                                timePlayedButtons[i]->get_transform()->GetComponentInChildren<HMUI::HoverHint*>()->set_text("Score Set: " + formattedDate);
+                                timePlayedButtons[i]->get_gameObject()->SetActive(true);
+                            }
                         }
                     }
                     else {
-                        SetErrorState(loadingControl, "Leaderboard does not exist");
-                        leaderboard.get_panelViewController()->set_color("");
+                        auto apiInfo = Models::AccSaberAPISong::GetDataForBeatmap(difficultyBeatmap);
+                        if (apiInfo.has_value()){
+                            SetLoading(false, "No more scores for this map");
+                            leaderboard.get_panelViewController()->set_color(Utils::toLower(strtok(const_cast<char*>(apiInfo.value().categoryDisplayName.c_str()), " ")));
+                        }
+                        else{
+                            SetLoading(false, "Leaderboard does not exist");
+                            leaderboard.get_panelViewController()->set_color("");
+                        }
                     }
                     leaderboard.get_panelViewController()->set_complexity(
                         Models::AccSaberAPISong::GetComplexityForBeatmap(difficultyBeatmap));
@@ -175,23 +188,5 @@ namespace AccSaber::UI::Leaderboard
             });
         });
         t.detach();
-    }
-
-    void AccSaberLeaderboardViewController::CreateLoadingControl(){
-        Object::Destroy(leaderboardTableView->GetComponent<LoadingControl*>());
-        auto* loadingTemplate = UnityEngine::Resources::FindObjectsOfTypeAll<PlatformLeaderboardViewController*>()
-            .FirstOrDefault()->get_transform()->Find("Container/LeaderboardTableView/LoadingControl")->GetComponentInChildren<LoadingControl*>();
-        leaderboardTableView->AddComponent<LoadingControl*>()->Instantiate(loadingTemplate, leaderboardTableView->get_transform(), false);
-        auto* loadingControl = leaderboardTableView->GetComponent<LoadingControl*>();
-        Object::Destroy(loadingControl->get_transform()->GetComponentInChildren<TMPro::TextMeshProUGUI*>());
-        loadingControl->loadingContainer = leaderboard_loading;
-        loadingControl->downloadingContainer = leaderboard_loading;
-        loadingControl->refreshContainer = Object::Instantiate(loadingTemplate->refreshContainer, leaderboardTableView->get_transform(), false);
-        loadingControl->refreshContainer->get_transform()->set_localPosition(leaderboard_loading->get_transform()->get_localPosition());
-        loadingControl->refreshText = loadingControl->get_transform()->GetComponentsInChildren<TMPro::TextMeshProUGUI*>().get(1);
-        loadingControl->refreshButton = Object::Instantiate(loadingTemplate->refreshButton, leaderboardTableView->get_transform(), false);
-        loadingControl->refreshButton->get_gameObject()->SetActive(false);
-        loadingControl->refreshContainer->SetActive(false);
-        GameObject::Destroy(loadingControl->refreshText->GetComponent<Polyglot::LocalizedTextMeshProUGUI*>());
     }
 }

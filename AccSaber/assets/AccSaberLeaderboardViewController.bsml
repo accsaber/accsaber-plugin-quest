@@ -10,6 +10,15 @@
   <vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' pref-width='76' pref-height='60' anchor-pos-x="7" anchor-pos-y="5.5">
     <leaderboard id='leaderboardTableView' cell-size='6.05'>
       <loading-indicator id="leaderboard_loading" active="false" preserve-aspect="true" pref-width="15" pref-height="15" anchor-pos-x="-5"/>
+      <text id="errorText" active="false" anchor-pos-x="-5" align="Center" italics="true"/>
     </leaderboard>
+  </vertical>
+
+  <vertical anchor-pos-x="46" anchor-pos-y="5.4" spacing="-19.4">
+    <macro.repeat count='10'>
+      <horizontal min-height="8" child-expand-height="true" child-align="MiddleCenter">
+        <button-with-icon icon ="#ClockIcon" pref-width="7.5" pref-height="7.5" hover-hint="hello" active="false"/>
+      </horizontal>
+    </macro.repeat>
   </vertical>
 </bg>

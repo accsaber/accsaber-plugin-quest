@@ -5,7 +5,7 @@
   </horizontal>
   <horizontal id="container" pref-width="91" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" spacing="3" bg="title-gradient" bg-color="#0078B9" pad="2">
     <vertical pref-width="10" pref-height="10">
-      <clickable-image id="accsaber_logo" src="accsaber_accsaber_png" on-click="OnLogoClick" preserve-aspect="true" pref-width="10" pref-height="10" hover-hint="Opens the ScoreSaber main menu" />
+      <image id="accsaber_logo" src="accsaber_accsaber_png" preserve-aspect="true" pref-width="10" pref-height="10"/>
     </vertical>
     <vertical pref-width="0.5" pref-height="10">
       <image id="separator" src="accsaber_pixel_png" pref-width="0.5" pref-height="10" size-delta-x="0.5" size-delta-y="10" />
