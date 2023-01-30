@@ -16,12 +16,14 @@
 #include "UnityEngine/Application.hpp"
 #include "UnityEngine/Time.hpp"
 #include "main.hpp"
+#include "UI/Leaderboard/AccSaberCustomLeaderboard.hpp"
 
 DEFINE_TYPE(AccSaber::UI::Leaderboard, AccSaberPanel);
 
 using namespace UnityEngine;
 
 HMUI::ImageView* bgImage;
+extern AccSaber::UI::Leaderboard::CustomLeaderboard leaderboard;
 
 namespace AccSaber::UI::Leaderboard
 {
@@ -33,7 +35,7 @@ namespace AccSaber::UI::Leaderboard
         if (category == "standard") set_color(standardAccColor);
         else if (category == "tech") set_color(techAccColor);
         else if (category == "true") set_color(trueAccColor);
-        else set_color(UnityEngine::Color(0, 0, 0, 1));
+        else set_color(Color(0, 0, 0, 1));
     }
 
     void AccSaberPanel::set_complexity(float complexity)
@@ -44,7 +46,7 @@ namespace AccSaber::UI::Leaderboard
 
     void AccSaberPanel::set_ranking(int rank, float pp)
     {
-        global_rank_text->SetText(string_format("<b><color=#EDFF55>Global Ranking: </color></b>#%d<size=3> (<color=#00FFAE>%.2fap</color></size>)", rank, pp));
+        global_rank_text->SetText(string_format("<b><color=#EDFF55>Overall Ranking: </color></b>#%d<size=3> (<color=#00FFAE>%.2fap</color></size>)", rank, pp));
         set_loading(false);
     }
 
@@ -58,8 +60,8 @@ namespace AccSaber::UI::Leaderboard
         // rainbow=true;
         
         // currently just here for POC
-        set_color(techAccColor);
-        set_ranking(1, 123.45f);
+        set_color("");
+        set_ranking(leaderboard.player.rank, leaderboard.player.ap);
         set_complexity(-1);
     }
 

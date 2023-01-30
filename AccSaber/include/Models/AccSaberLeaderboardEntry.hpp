@@ -7,7 +7,7 @@ namespace AccSaber::Models {
         public:
             GlobalNamespace::LeaderboardTableView::ScoreData* CreateLeaderboardEntryData();
             int rank;
-            int playerId;
+            std::string playerId;
             std::string playerName;
             std::string avatarUrl;
             float accuracy;
@@ -17,7 +17,7 @@ namespace AccSaber::Models {
             std::string categoryName;
             bool accChamp;
 
-            AccSaberLeaderboardEntry(int rank, int playerId, std::string playerName, std::string avatarUrl, float accuracy, int score, double ap, std::string timeSet, std::string categoryName, bool accChamp) :
+            AccSaberLeaderboardEntry(int rank, std::string playerId, std::string playerName, std::string avatarUrl, float accuracy, int score, double ap, std::string timeSet, std::string categoryName, bool accChamp) :
             rank(rank),
             playerId(playerId),
             playerName(playerName),

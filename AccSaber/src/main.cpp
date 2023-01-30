@@ -6,6 +6,7 @@
 #include "leaderboardcore/shared/LeaderboardCore.hpp"
 #include "UI/Leaderboard/AccSaberCustomLeaderboard.hpp"
 #include "logging.hpp"
+#include "hooking.hpp"
 
 static ModInfo modInfo; // Stores the ID and version of our mod, and is sent to the modloader upon startup
 AccSaber::UI::Leaderboard::CustomLeaderboard leaderboard;
@@ -46,7 +47,7 @@ extern "C" void load() {
     LeaderboardCore::Register::RegisterLeaderboard(&leaderboard, modInfo);
     custom_types::Register::AutoRegister();
     getLogger().info("Installing hooks...");
-    // Install our hooks (none defined yet)
+    Hooks::InstallHooks(getLogger());
     getLogger().info("Installed all hooks!");
     
     LeaderboardCore::Events::NotifyLeaderboardSet() += LeaderboardSet;

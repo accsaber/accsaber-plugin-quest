@@ -11,6 +11,5 @@ namespace AccSaber::Utils{
                 callback(request->get_downloadHandler()->GetText());
             }));
         });
-        
     }
 }

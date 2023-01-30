@@ -86,9 +86,12 @@ namespace AccSaber::UI::Leaderboard
 
     void AccSaberLeaderboardViewController::CheckPage()
     {
-        auto* btn = up_button->get_transform()->GetComponentInChildren<UnityEngine::UI::Button*>();
-        if (_leaderboardPage > 0) btn->set_interactable(true);
-        else btn->set_interactable(false);
+        auto* upButton = up_button->get_transform()->GetComponentInChildren<UnityEngine::UI::Button*>();
+        auto* downButton = down_button->get_transform()->GetComponentInChildren<UnityEngine::UI::Button*>();
+
+        if (_leaderboardPage > 0) upButton->set_interactable(true);
+        else upButton->set_interactable(false);
+        downButton->set_interactable(!(_lastScopeIndex == 1));
     }
 
     void AccSaberLeaderboardViewController::ChangeScope()
@@ -120,7 +123,7 @@ namespace AccSaber::UI::Leaderboard
 
     void AccSaberLeaderboardViewController::onLeaderboardSet(IDifficultyBeatmap* difficultyBeatmap){
         auto* view = leaderboardTableView->get_transform()->GetComponentInChildren<LeaderboardTableView*>();
-        this->RefreshLeaderboard(difficultyBeatmap, view, 0, System::Guid::NewGuid().ToString());
+        this->RefreshLeaderboard(difficultyBeatmap, view, _lastScopeIndex, System::Guid::NewGuid().ToString());
     }
 
     List<LeaderboardTableView::ScoreData*>* CreateLeaderboardData(std::vector<Models::AccSaberLeaderboardEntry> leaderboard){
@@ -143,6 +146,13 @@ namespace AccSaber::UI::Leaderboard
         errorText->SetText(error);
     }
 
+    int getPlayerIndex(std::vector<Models::AccSaberLeaderboardEntry> leaderboardEntires){
+        for (int i =0; i<leaderboardEntires.size(); i++){
+            if (leaderboardEntires[i].playerId == leaderboard.player.playerId) return i;
+        }
+        return -1;
+    }
+
     void AccSaberLeaderboardViewController::RefreshLeaderboard(IDifficultyBeatmap* difficultyBeatmap, LeaderboardTableView* tableView,
         PlatformLeaderboardsModel::ScoresScope scope, std::string refreshId) 
     {
@@ -155,12 +165,14 @@ namespace AccSaber::UI::Leaderboard
         std::thread t([difficultyBeatmap, scope, tableView, refreshId, this] {
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             if (_currentLeaderboardRefreshId != refreshId) return;
-            Downloaders::DownloadLeaderboardAsync(difficultyBeatmap, _leaderboardPage, [=](std::optional<std::vector<Models::AccSaberLeaderboardEntry>> leaderboardData){
+            Downloaders::DownloadLeaderboardAsync(difficultyBeatmap, scope, _leaderboardPage, [=](std::optional<std::vector<Models::AccSaberLeaderboardEntry>> leaderboardData){
                 QuestUI::MainThreadScheduler::Schedule([=]() {
                     if (_currentLeaderboardRefreshId != refreshId) return;
                     if (leaderboardData.has_value()) {
-                        if (leaderboardData.value().size() != 0) {   
-                            tableView->SetScores(CreateLeaderboardData(leaderboardData.value()), -1);
+                        if (leaderboardData.value().size() != 0) {
+                            int playerIndex = getPlayerIndex(leaderboardData.value());
+                            DEBUG("Player Index: {}", playerIndex);  
+                            tableView->SetScores(CreateLeaderboardData(leaderboardData.value()), playerIndex);
                             RichMyText(tableView);
                             SetLoading(false);
                             leaderboard.get_panelViewController()->set_color(leaderboardData.value()[0].categoryName);
@@ -174,7 +186,10 @@ namespace AccSaber::UI::Leaderboard
                     else {
                         auto apiInfo = Models::AccSaberAPISong::GetDataForBeatmap(difficultyBeatmap);
                         if (apiInfo.has_value()){
-                            SetLoading(false, "No more scores for this map");
+                            if (_lastScopeIndex == 1){
+                                SetLoading(false, leaderboard.player.playerId == "-1" ? "You do not have an account" : "You have not set a score on this leaderboard");
+                            }
+                            else SetLoading(false, "No more scores for this map");
                             leaderboard.get_panelViewController()->set_color(Utils::toLower(strtok(const_cast<char*>(apiInfo.value().categoryDisplayName.c_str()), " ")));
                         }
                         else{

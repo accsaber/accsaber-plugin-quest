@@ -4,14 +4,16 @@
 #include "Models/AccSaberAPISong.hpp"
 #include "UI/Leaderboard/AccSaberCustomLeaderboard.hpp"
 #include "beatsaber-hook/shared/config/config-utils.hpp"
+#include "Utils/Constants.hpp"
 
 extern AccSaber::UI::Leaderboard::CustomLeaderboard leaderboard;
 
 using namespace rapidjson;
+using namespace AccSaber::Utils::Constants;
 
 namespace AccSaber::Downloaders{
     void DownloadRankedMapsList(){
-        Utils::SendWebRequest("https://api.accsaber.com/ranked-maps", [](std::string response){
+        Utils::SendWebRequest(API_URL + RANKED_ENDPOINT, [](std::string response){
             Document document;
             document.Parse(response.c_str());
             if (document.HasMember("errorCode") || document.Empty()) return;

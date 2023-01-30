@@ -5,6 +5,7 @@
 #include "UI/Leaderboard/AccSaberPanel.hpp"
 #include "GlobalNamespace/IDifficultyBeatmap.hpp"
 #include "Models/AccSaberAPISong.hpp"
+#include "Models/AccSaberUserModel.hpp"
 
 namespace AccSaber::UI::Leaderboard
 {
@@ -15,6 +16,7 @@ namespace AccSaber::UI::Leaderboard
             AccSaberLeaderboardViewController* get_leaderboardViewController() final override;
             GlobalNamespace::IDifficultyBeatmap* currentDifficultyBeatmap;
             std::vector<Models::AccSaberAPISong> accSaberRankedSongs;
+            Models::AccSaberUserModel player;
 
         private:
             SafePtrUnity<AccSaberPanel> panelViewController;
