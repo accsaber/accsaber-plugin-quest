@@ -21,10 +21,7 @@ DECLARE_CLASS_CODEGEN(AccSaber::UI::Leaderboard, AccSaberPanel, HMUI::ViewContro
     DECLARE_INSTANCE_FIELD(TMPro::TextMeshProUGUI*, leaderboard_ranked_text);
     DECLARE_INSTANCE_FIELD(TMPro::TextMeshProUGUI*, promptText);
     DECLARE_INSTANCE_FIELD(UnityEngine::GameObject*, prompt_loader);
-    DECLARE_INSTANCE_METHOD(void, OnLogoClick);
-    DECLARE_INSTANCE_METHOD(void, OnRankTextClick);
-    DECLARE_INSTANCE_METHOD(void, OnRankedStatusClick);
-    DECLARE_INSTANCE_METHOD(void, Update);
+    DECLARE_INSTANCE_METHOD(void, downloadClick);
 
     public:
         int scoreboardId;
@@ -32,9 +29,7 @@ DECLARE_CLASS_CODEGEN(AccSaber::UI::Leaderboard, AccSaberPanel, HMUI::ViewContro
         void set_color(UnityEngine::Color color);
         void set_color(std::string category);
         void set_complexity(float complexity);
-        void Prompt(std::string status, bool loadingIndicator, float dismiss, std::function<void()> callback);
         void set_prompt(std::string text, int dismissTime);
-        custom_types::Helpers::Coroutine SetPrompt(std::string status, bool showIndicator, float dismiss, std::function<void()> callback);
         void set_loading(bool value);
     private:
         bool rainbow = false;

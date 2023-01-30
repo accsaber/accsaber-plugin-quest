@@ -7,15 +7,11 @@
 #include "GlobalNamespace/LoadingControl.hpp"
 #include "bsml/shared/Helpers/utilities.hpp"
 #include "main.hpp"
-// #include "CustomTypes/Components/LeaderboardScoreInfoButtonHandler.hpp"
 #include "questui/shared/CustomTypes/Components/MainThreadScheduler.hpp"
 #include <functional>
 #include "System/Guid.hpp"
 #include "bsml/shared/BSML/Components/ButtonIconImage.hpp"
-#include "Polyglot/LocalizedTextMeshProUGUI.hpp"
 #include "Downloaders/LeaderboardDownloader.hpp"
-#include "GlobalNamespace/StandardLevelDetailViewController.hpp"
-#include "GlobalNamespace/StandardLevelDetailView.hpp"
 #include "GlobalNamespace/LeaderboardTableCell.hpp"
 #include "Models/AccSaberAPISong.hpp"
 #include "Downloaders/AccSaberDownloader.hpp"
@@ -28,7 +24,6 @@ using namespace QuestUI::BeatSaberUI;
 using namespace HMUI;
 using namespace UnityEngine;
 using namespace UnityEngine::UI;
-// using namespace AccSaber::Services;
 using namespace BSML::Utilities;
 using namespace HMUI;
 using namespace GlobalNamespace;
@@ -38,7 +33,6 @@ DEFINE_TYPE(AccSaber::UI::Leaderboard, AccSaberLeaderboardViewController);
 extern ModInfo modInfo;
 
 extern AccSaber::UI::Leaderboard::CustomLeaderboard leaderboard;
-// AccSaber::CustomTypes::Components::LeaderboardScoreInfoButtonHandler* leaderboardScoreInfoButtonHandler;
 int _lastCell = 0;
 int _leaderboardPage = 0;
 bool _filterAroundCountry = false;
@@ -47,13 +41,13 @@ int _lastScopeIndex = 0;
 
 namespace AccSaber::UI::Leaderboard
 {
-
     void AccSaberLeaderboardViewController::PostParse(){
-        Array<IconSegmentedControl::DataItem*>* array = ::Array<IconSegmentedControl::DataItem*>::New({
+        auto icons = ArrayW<IconSegmentedControl::DataItem*>({
             IconSegmentedControl::DataItem::New_ctor(LoadSpriteRaw(IncludedAssets::Global_png), "Global"),
             IconSegmentedControl::DataItem::New_ctor(LoadSpriteRaw(IncludedAssets::Player_png), "Around You")
         });
-        scopeSegmentedControl->SetData(array);
+        scopeSegmentedControl->SetData(icons);
+
         GetComponentsInChildren<VerticalLayoutGroup*>().First([](auto& v){return v->get_spacing()==-19.4f;})
             ->GetComponentsInChildren<BSML::ButtonIconImage*>(true).copy_to(timePlayedButtons);
         for (auto& icon : timePlayedButtons){
@@ -67,41 +61,25 @@ namespace AccSaber::UI::Leaderboard
         if (firstActivation)
         {
             BSML::parse_and_construct(IncludedAssets::AccSaberLeaderboardViewController_bsml, get_transform(), this);
-            leaderboard.get_panelViewController()->Prompt("Welcome to AccSaber!", false, 5.0f, nullptr);
-            if (leaderboard.accSaberRankedSongs.size() < 1) AccSaber::Downloaders::DownloadRankedMapsList();
+            leaderboard.get_panelViewController()->set_prompt("Welcome to AccSaber!", 5.0f);
+            if (leaderboard.accSaberRankedSongs.size() < 1) Downloaders::DownloadRankedMapsList();
+        }
+        leaderboard.get_leaderboardViewController()->CheckPage();
+        leaderboard.get_leaderboardViewController()->onLeaderboardSet(leaderboard.currentDifficultyBeatmap);
 
-            std::thread([] {
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-                QuestUI::MainThreadScheduler::Schedule([]() {
-                    leaderboard.get_leaderboardViewController()->CheckPage();
-                    leaderboard.get_leaderboardViewController()->onLeaderboardSet(leaderboard.currentDifficultyBeatmap);
-                });
-            }).detach();
-        }
-        else{
-            leaderboard.get_leaderboardViewController()->CheckPage();
-            leaderboard.get_leaderboardViewController()->onLeaderboardSet(leaderboard.currentDifficultyBeatmap);
-        }
     }
 
     void AccSaberLeaderboardViewController::CheckPage()
     {
-        auto* upButton = up_button->get_transform()->GetComponentInChildren<UnityEngine::UI::Button*>();
-        auto* downButton = down_button->get_transform()->GetComponentInChildren<UnityEngine::UI::Button*>();
-
-        if (_leaderboardPage > 0) upButton->set_interactable(true);
-        else upButton->set_interactable(false);
-        downButton->set_interactable(!(_lastScopeIndex == 1));
+        up_button->set_interactable(_leaderboardPage > 0);
+        down_button->set_interactable(_lastScopeIndex == 0);
     }
 
     void AccSaberLeaderboardViewController::ChangeScope()
     {
-        if (this->isActivated)
-        {
-            _leaderboardPage = 0;
-            onLeaderboardSet(leaderboard.currentDifficultyBeatmap);
-            CheckPage();
-        }
+        _leaderboardPage = 0;
+        onLeaderboardSet(leaderboard.currentDifficultyBeatmap);
+        CheckPage();
     }
 
     void AccSaberLeaderboardViewController::OnIconSelected(IconSegmentedControl* segmentedControl, int index){
@@ -122,8 +100,8 @@ namespace AccSaber::UI::Leaderboard
     }
 
     void AccSaberLeaderboardViewController::onLeaderboardSet(IDifficultyBeatmap* difficultyBeatmap){
-        auto* view = leaderboardTableView->get_transform()->GetComponentInChildren<LeaderboardTableView*>();
-        this->RefreshLeaderboard(difficultyBeatmap, view, _lastScopeIndex, System::Guid::NewGuid().ToString());
+        DEBUG("refreshing AccSaber leaderboard");
+        this->RefreshLeaderboard(difficultyBeatmap, leaderboardTableView, _lastScopeIndex, System::Guid::NewGuid().ToString());
     }
 
     List<LeaderboardTableView::ScoreData*>* CreateLeaderboardData(std::vector<Models::AccSaberLeaderboardEntry> leaderboard){
@@ -133,7 +111,7 @@ namespace AccSaber::UI::Leaderboard
     }
 
     void RichMyText(LeaderboardTableView* tableView){
-        for (auto& cell : tableView->get_transform()->GetComponentsInChildren<LeaderboardTableCell*>()){
+        for (auto& cell : tableView->GetComponentsInChildren<LeaderboardTableCell*>()){
             cell->playerNameText->set_richText(true);
         }
     }
@@ -197,8 +175,7 @@ namespace AccSaber::UI::Leaderboard
                             leaderboard.get_panelViewController()->set_color("");
                         }
                     }
-                    leaderboard.get_panelViewController()->set_complexity(
-                        Models::AccSaberAPISong::GetComplexityForBeatmap(difficultyBeatmap));
+                    leaderboard.get_panelViewController()->set_complexity(Models::AccSaberAPISong::GetComplexityForBeatmap(difficultyBeatmap));
                 });
             });
         });

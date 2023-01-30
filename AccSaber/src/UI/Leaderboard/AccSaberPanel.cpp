@@ -57,9 +57,6 @@ namespace AccSaber::UI::Leaderboard
         accsaber_logo->skew = 0.18f;
         separator->skew = 0.18f;
 
-        // rainbow=true;
-        
-        // currently just here for POC
         set_color("");
         set_ranking(leaderboard.player.rank, leaderboard.player.ap);
         set_complexity(-1);
@@ -69,56 +66,6 @@ namespace AccSaber::UI::Leaderboard
     {
         if (!firstActivation) return;
         BSML::parse_and_construct(IncludedAssets::PanelView_bsml, this->get_transform(), this);
-    }
-
-    void AccSaberPanel::Prompt(std::string status, bool loadingIndicator, float dismiss, std::function<void()> callback)
-    {
-        GlobalNamespace::SharedCoroutineStarter::get_instance()->StartCoroutine(
-        custom_types::Helpers::CoroutineHelper::New(SetPrompt(status, loadingIndicator, dismiss, callback)));
-    }
-
-    custom_types::Helpers::Coroutine AccSaberPanel::SetPrompt(std::string status, bool showIndicator, float dismiss, std::function<void()> callback)
-    {
-        this->promptText->SetText(status);
-
-        std::string text = status;
-
-        for (int i = 1; i < (dismiss * 2) + 1; i++)
-        {
-            co_yield reinterpret_cast<System::Collections::IEnumerator*>(
-                CRASH_UNLESS(WaitForSeconds::New_ctor(0.5f)));
-
-            // Couldn't get the loading indicator to work so right now it just displays
-            // dots as the loading indicator
-            if (showIndicator)
-            {
-                if (i % 4 != 0)
-                {
-                    text = text + ".";
-                    promptText->SetText(text);
-                }
-                else
-                {
-                    for (int k = 0; k < 3; k++)
-                    {
-                        text.pop_back();
-                    }
-                    promptText->SetText(text);
-                }
-            }
-        }
-
-        if (dismiss > 0)
-        {
-            promptText->set_text(std::string());
-        }
-
-        if (callback)
-        {
-            callback();
-        }
-
-        co_return;
     }
 
     void AccSaberPanel::set_prompt(std::string text, int dismissTime)
@@ -143,7 +90,7 @@ namespace AccSaber::UI::Leaderboard
         leaderboard_ranked_text->get_gameObject()->SetActive(!value);
     }
 
-    void AccSaberPanel::OnLogoClick(){
+    void AccSaberPanel::downloadClick(){
         // HACK: Resources call to get these objects to use for changing menu is bad but there's no good other choice afaik
         auto mainfc = BSML::Helpers::GetMainFlowCoordinator();
         auto youngest = mainfc->YoungestChildFlowCoordinatorOrSelf();
@@ -155,38 +102,5 @@ namespace AccSaber::UI::Leaderboard
         // }
 
         // youngest->PresentFlowCoordinator(fc, nullptr, ViewController::AnimationDirection::Horizontal, false, false);
-    }
-
-    void AccSaberPanel::OnRankTextClick(){
-        // just make sure to have this actually assigned
-        // if (playerProfileModal && Object::IsNativeObjectAlive(playerProfileModal))
-        // {
-        //     playerProfileModal->Show(AccSaber::Services::PlayerService::playerInfo.localPlayerData.id);
-        // }
-    }
-
-    void AccSaberPanel::OnRankedStatusClick(){
-        auto songURL = string_format("https://accsaber.com/leaderboard/%d", scoreboardId);
-        Application::OpenURL(songURL);
-    }
-
-    void AccSaberPanel::Update()
-    {
-    //     // if we are not going to be rainbow, and we were just rainbow
-    //     if (!rainbow && wasRainbow)
-    //     {
-    //         // set bg color to default
-    //         wasRainbow = false;
-    //         set_color(defaultColor);
-    //     }
-    //     else if (rainbow)
-    //     {
-    //         wasRainbow = true;
-    //         // make this color dependent on some kind of rainbow / gradient source
-    //         colorAngle += UnityEngine::Time::get_deltaTime() * 0.1f;
-    //         colorAngle = std::fmod(colorAngle, 1.0f);
-    //         UnityEngine::Color color = UnityEngine::Color::HSVToRGB(colorAngle, 1.0f, 1.0f);
-    //         set_color(color);
-    //     }
     }
 }
