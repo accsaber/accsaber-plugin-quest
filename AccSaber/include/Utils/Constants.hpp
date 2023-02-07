@@ -14,4 +14,7 @@ namespace AccSaber::Utils::Constants{
     static const std::string CATEGORY_ENDPOINT = "categories";
     static const std::string AROUND_ME = "/around/";
     static const std::string OVERALL = "/overall";
+    static const std::string STANDARD = "/standard";
+    static const std::string TRUE = "/true";
+    static const std::string TECH = "/tech";
 }

@@ -17,12 +17,14 @@
 #include "UnityEngine/Time.hpp"
 #include "main.hpp"
 #include "UI/Leaderboard/AccSaberCustomLeaderboard.hpp"
+#include "Models/AccSaberAPISong.hpp"
+#include "Utils/StringUtils.hpp"
+#include "logging.hpp"
 
 DEFINE_TYPE(AccSaber::UI::Leaderboard, AccSaberPanel);
 
 using namespace UnityEngine;
 
-HMUI::ImageView* bgImage;
 extern AccSaber::UI::Leaderboard::CustomLeaderboard leaderboard;
 
 namespace AccSaber::UI::Leaderboard
@@ -44,21 +46,24 @@ namespace AccSaber::UI::Leaderboard
         set_loading(false);
     }
 
-    void AccSaberPanel::set_ranking(int rank, float pp)
+    void AccSaberPanel::set_ranking(int rank, float ap)
     {
-        global_rank_text->SetText(string_format("<b><color=#EDFF55>Overall Ranking: </color></b>#%d<size=3> (<color=#00FFAE>%.2fap</color></size>)", rank, pp));
+        const char* category = overallRankingScope ? "Overall" : "Category";
+        const char* error = rank == -1 ? "No rank recorded for player" : "Not an AccSaber ranked map";
+        if (rank < 0) global_rank_text->SetText(string_format("<b><color=#EDFF55>%s Ranking: %s", category, error));
+        else global_rank_text->SetText(string_format("<b><color=#EDFF55>%s Ranking: </color></b>#%d<size=3> (<color=#00FFAE>%.2fap</color></size>)", category, rank, ap));
         set_loading(false);
     }
 
     void AccSaberPanel::PostParse(){
         bgImage = container->GetComponent<BSML::Backgroundable*>()->background;
-        bgImage->skew = 0.18f;
         bgImage->gradient = true;
         accsaber_logo->skew = 0.18f;
         separator->skew = 0.18f;
 
+        overallRankingScope = true;
         set_color("");
-        set_ranking(leaderboard.player.rank, leaderboard.player.ap);
+        set_ranking(leaderboard.playerCategoryData[0].rank, leaderboard.playerCategoryData[0].ap);
         set_complexity(-1);
     }
 
@@ -102,5 +107,22 @@ namespace AccSaber::UI::Leaderboard
         // }
 
         // youngest->PresentFlowCoordinator(fc, nullptr, ViewController::AnimationDirection::Horizontal, false, false);
+    }
+
+    void AccSaberPanel::set_ranking_category(std::string category){
+        if (overallRankingScope) return set_ranking(leaderboard.playerCategoryData[0].rank, leaderboard.playerCategoryData[0].ap);
+        Models::AccSaberUserModel* userModel;
+        if (category == "standard") userModel = &leaderboard.playerCategoryData[1];
+        else if (category == "true") userModel = &leaderboard.playerCategoryData[2];
+        else if (category == "tech") userModel = &leaderboard.playerCategoryData[3];
+        else return set_ranking(-2, -1.0f);
+        set_ranking(userModel->rank, userModel->ap);
+    }
+
+    void AccSaberPanel::OnRankingClick(){
+        overallRankingScope = !overallRankingScope;
+        auto mapData = Models::AccSaberAPISong::GetDataForBeatmap(leaderboard.currentDifficultyBeatmap);
+        std::string category = mapData.has_value() ? Utils::toLower(Utils::split(mapData.value().categoryDisplayName, ' ')[0]) : "";
+        set_ranking_category(category);
     }
 }

@@ -3,12 +3,12 @@
 
 namespace AccSaber::Models {
     struct AccSaberUserModel {
-        int rank;
+        int rank = 0;
         std::string playerId = "-1";
         std::string playerName;
         std::string hmd;
         float averageAcc;
-        float ap;
+        float ap = -1.0f;
         float averageApPerMap;
         int rankedPlays;
         bool accChamp;

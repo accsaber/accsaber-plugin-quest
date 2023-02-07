@@ -7,6 +7,11 @@ namespace AccSaber::Utils{
         return s;
     }
 
+    std::string toUpper(std::string s){
+        for (char& c : s) c = std::toupper(c);
+        return s;
+    }
+
     std::string TimeStampToDateString(std::string date){
         std::wistringstream ss{std::wstring(date.begin(),date.end())};
         std::tm dt;
@@ -23,5 +28,12 @@ namespace AccSaber::Utils{
         std::vector<std::string> elems;
         while (std::getline(ss, item, delim)) elems.push_back(item);
         return elems;
+    }
+
+    std::string rgbaToHex(UnityEngine::Color colour){
+        char hexColour[10];
+        std::snprintf(hexColour, sizeof(hexColour), "#%02x%02x%02x%02x", 
+            std::clamp<int>(colour.a * 255, 0, 255), std::clamp<int>(colour.r * 255, 0, 255), std::clamp<int>(colour.g * 255, 0, 255), std::clamp<int>(colour.b * 255, 0, 255));
+        return std::string(hexColour);
     }
 }

@@ -16,10 +16,12 @@ DECLARE_CLASS_CODEGEN(AccSaber::UI::Leaderboard, AccSaberPanel, HMUI::ViewContro
     DECLARE_INSTANCE_FIELD(UnityEngine::UI::HorizontalLayoutGroup*, container);
     DECLARE_INSTANCE_FIELD(HMUI::ImageView*, accsaber_logo);
     DECLARE_INSTANCE_FIELD(HMUI::ImageView*, separator);
+    DECLARE_INSTANCE_FIELD(HMUI::ImageView*, bgImage);
     DECLARE_INSTANCE_METHOD(void, PostParse);
     DECLARE_INSTANCE_FIELD(TMPro::TextMeshProUGUI*, global_rank_text);
     DECLARE_INSTANCE_FIELD(TMPro::TextMeshProUGUI*, leaderboard_ranked_text);
     DECLARE_INSTANCE_FIELD(TMPro::TextMeshProUGUI*, promptText);
+    DECLARE_INSTANCE_METHOD(void, OnRankingClick);
     DECLARE_INSTANCE_FIELD(UnityEngine::GameObject*, prompt_loader);
     DECLARE_INSTANCE_METHOD(void, downloadClick);
 
@@ -31,11 +33,13 @@ DECLARE_CLASS_CODEGEN(AccSaber::UI::Leaderboard, AccSaberPanel, HMUI::ViewContro
         void set_complexity(float complexity);
         void set_prompt(std::string text, int dismissTime);
         void set_loading(bool value);
+        void set_ranking_category(std::string category = "overall");
+        static constexpr const UnityEngine::Color trueAccColor = {0.015f, 0.906f, 0.176f, 1.0f};
+        static constexpr const UnityEngine::Color standardAccColor = {0.039f, 0.573f, 0.918f, 1.0f};
+        static constexpr const UnityEngine::Color techAccColor = {0.902f, 0.027f, 0.027f, 1.0f};
     private:
         bool rainbow = false;
         bool wasRainbow = false;
         float colorAngle = 0.0f;
-        static constexpr const UnityEngine::Color trueAccColor = {0.015f, 0.906f, 0.176f, 1.0f};
-        static constexpr const UnityEngine::Color standardAccColor = {0.039f, 0.573f, 0.918f, 1.0f};
-        static constexpr const UnityEngine::Color techAccColor = {0.902f, 0.027f, 0.027f, 1.0f};
+        bool overallRankingScope = true;
 )

@@ -33,11 +33,10 @@ DEFINE_TYPE(AccSaber::UI::Leaderboard, AccSaberLeaderboardViewController);
 extern ModInfo modInfo;
 
 extern AccSaber::UI::Leaderboard::CustomLeaderboard leaderboard;
-int _lastCell = 0;
 int _leaderboardPage = 0;
 bool _filterAroundCountry = false;
 std::string _currentLeaderboardRefreshId;
-int _lastScopeIndex = 0;
+int _lastScopeIndex = 0; 
 
 namespace AccSaber::UI::Leaderboard
 {
@@ -66,7 +65,6 @@ namespace AccSaber::UI::Leaderboard
         }
         leaderboard.get_leaderboardViewController()->CheckPage();
         leaderboard.get_leaderboardViewController()->onLeaderboardSet(leaderboard.currentDifficultyBeatmap);
-
     }
 
     void AccSaberLeaderboardViewController::CheckPage()
@@ -126,7 +124,7 @@ namespace AccSaber::UI::Leaderboard
 
     int getPlayerIndex(std::vector<Models::AccSaberLeaderboardEntry> leaderboardEntires){
         for (int i =0; i<leaderboardEntires.size(); i++){
-            if (leaderboardEntires[i].playerId == leaderboard.player.playerId) return i;
+            if (leaderboardEntires[i].playerId == leaderboard.playerCategoryData[0].playerId) return i;
         }
         return -1;
     }
@@ -153,10 +151,12 @@ namespace AccSaber::UI::Leaderboard
                             tableView->SetScores(CreateLeaderboardData(leaderboardData.value()), playerIndex);
                             RichMyText(tableView);
                             SetLoading(false);
-                            leaderboard.get_panelViewController()->set_color(leaderboardData.value()[0].categoryName);
+                            leaderboard.get_panelViewController()->set_color(Utils::toLower(leaderboardData.value()[0].categoryName));
+                            categoryDisplayName->SetText(Utils::toUpper(leaderboardData.value()[0].categoryName) + " ACC");
+                            leaderboard.get_panelViewController()->set_ranking_category(Utils::toLower(leaderboardData.value()[0].categoryName));
                             for (int i=0; i<leaderboardData.value().size(); i++){
                                 std::string formattedDate = Utils::TimeStampToDateString(leaderboardData.value()[i].timeSet);
-                                timePlayedButtons[i]->get_transform()->GetComponentInChildren<HMUI::HoverHint*>()->set_text("Score Set: " + formattedDate);
+                                timePlayedButtons[i]->GetComponent<HMUI::HoverHint*>()->set_text("Score Set: " + formattedDate);
                                 timePlayedButtons[i]->get_gameObject()->SetActive(true);
                             }
                         }
@@ -165,14 +165,18 @@ namespace AccSaber::UI::Leaderboard
                         auto apiInfo = Models::AccSaberAPISong::GetDataForBeatmap(difficultyBeatmap);
                         if (apiInfo.has_value()){
                             if (_lastScopeIndex == 1){
-                                SetLoading(false, leaderboard.player.playerId == "-1" ? "You do not have an account" : "You have not set a score on this leaderboard");
+                                SetLoading(false, leaderboard.playerCategoryData[0].playerId == "-1" ? "You do not have an account" : "You have not set a score on this leaderboard");
                             }
                             else SetLoading(false, "No more scores for this map");
-                            leaderboard.get_panelViewController()->set_color(Utils::toLower(strtok(const_cast<char*>(apiInfo.value().categoryDisplayName.c_str()), " ")));
+                            auto splat = Utils::split(apiInfo.value().categoryDisplayName, ' ');
+                            leaderboard.get_panelViewController()->set_color(Utils::toLower(splat[0]));
+                            categoryDisplayName->SetText(Utils::toUpper(splat[0]) + " ACC");
                         }
                         else{
                             SetLoading(false, "Leaderboard does not exist");
                             leaderboard.get_panelViewController()->set_color("");
+                            categoryDisplayName->SetText("UNRANKED");
+                            leaderboard.get_panelViewController()->set_ranking_category();
                         }
                     }
                     leaderboard.get_panelViewController()->set_complexity(Models::AccSaberAPISong::GetComplexityForBeatmap(difficultyBeatmap));
@@ -180,5 +184,15 @@ namespace AccSaber::UI::Leaderboard
             });
         });
         t.detach();
+    }
+
+    StringW AccSaberLeaderboardViewController::get_techAccColor(){
+        return Utils::rgbaToHex(AccSaberPanel::techAccColor);
+    }
+    StringW AccSaberLeaderboardViewController::get_trueAccColor(){
+        return Utils::rgbaToHex(AccSaberPanel::trueAccColor);
+    }
+    StringW AccSaberLeaderboardViewController::get_standardAccColor(){
+        return Utils::rgbaToHex(AccSaberPanel::standardAccColor);
     }
 }

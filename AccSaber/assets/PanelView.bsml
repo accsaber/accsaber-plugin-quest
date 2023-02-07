@@ -3,7 +3,7 @@
     <text id="promptText" text="Uploading..." anchor-pos-x="0" anchor-pos-y="10" align="BottomLeft" italics="true" />
     <loading-indicator id="prompt_loader" active="~prompt-loader-active" preserve-aspect="false" pref-width="4" pref-height="4" />
   </horizontal>
-  <horizontal id="container" pref-width="91" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" spacing="3" bg="title-gradient" bg-color="#0078B9" pad="2">
+  <horizontal id="container" pref-width="91" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" spacing="3" bg="title-gradient" bg-color="#000000" pad="2">
     <vertical pref-width="10" pref-height="10">
       <image id="accsaber_logo" src="accsaber_accsaber_png" preserve-aspect="true" pref-width="10" pref-height="10"/>
     </vertical>
@@ -11,7 +11,7 @@
       <image id="separator" src="accsaber_pixel_png" pref-width="0.5" pref-height="10" size-delta-x="0.5" size-delta-y="10" />
     </vertical>
     <vertical active="true" pref-width="70" pref-height="10" spacing="-1">
-      <text id="global_rank_text" active="true" text="~global_leaderboard_ranking" font-size="3.5" overflow-mode="Ellipsis" italics="true" align="Left" />
+      <clickable-text id="global_rank_text" active="true" text="~global_leaderboard_ranking" on-click="OnRankingClick" font-size="3.5" overflow-mode="Ellipsis" italics="true" align="Left" />
       <text id="leaderboard_ranked_text" active="true" text="~leaderboard_ranked_status" font-size="3.5" overflow-mode="Ellipsis" italics="true" align="Left"/>
     </vertical>
   </horizontal>

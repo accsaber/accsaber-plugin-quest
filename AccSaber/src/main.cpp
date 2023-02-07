@@ -3,7 +3,6 @@
 #include "assets.hpp"
 #include "custom-types/shared/register.hpp"
 #include "questui/shared/QuestUI.hpp"
-#include "leaderboardcore/shared/LeaderboardCore.hpp"
 #include "UI/Leaderboard/AccSaberCustomLeaderboard.hpp"
 #include "logging.hpp"
 #include "hooking.hpp"
@@ -35,6 +34,7 @@ extern "C" void setup(ModInfo& info) {
 }
 
 void LeaderboardSet(GlobalNamespace::IDifficultyBeatmap* difficultyBeatmap){
+    DEBUG("MAP SELECTED");
     leaderboard.currentDifficultyBeatmap = difficultyBeatmap;
     auto vc = leaderboard.get_leaderboardViewController();
     if (vc && vc->isActivated) vc->onLeaderboardSet(difficultyBeatmap);

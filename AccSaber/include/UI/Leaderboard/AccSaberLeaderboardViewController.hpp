@@ -13,6 +13,7 @@
 #include "bsml/shared/BSML/Components/ButtonIconImage.hpp"
 #include "TMPro/TextMeshProUGUI.hpp"
 #include "UnityEngine/UI/Button.hpp"
+#include "UnityEngine/UI/HorizontalLayoutGroup.hpp"
 
 DECLARE_CLASS_CODEGEN(AccSaber::UI::Leaderboard, AccSaberLeaderboardViewController, HMUI::ViewController,
     DECLARE_OVERRIDE_METHOD(void, DidActivate, il2cpp_utils::il2cpp_type_check::MetadataGetter<&HMUI::ViewController::DidActivate>::get(), bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling);
@@ -26,6 +27,10 @@ DECLARE_CLASS_CODEGEN(AccSaber::UI::Leaderboard, AccSaberLeaderboardViewControll
     DECLARE_INSTANCE_METHOD(void, OnIconSelected, HMUI::IconSegmentedControl* segmentedControl, int index);
     DECLARE_INSTANCE_METHOD(void, OnPageUp);
     DECLARE_INSTANCE_METHOD(void, OnPageDown);
+    DECLARE_INSTANCE_METHOD(StringW, get_techAccColor);
+    DECLARE_INSTANCE_METHOD(StringW, get_trueAccColor);
+    DECLARE_INSTANCE_METHOD(StringW, get_standardAccColor);
+    DECLARE_INSTANCE_FIELD(TMPro::TextMeshProUGUI*, categoryDisplayName);
 
     public:
     void RefreshLeaderboard(GlobalNamespace::IDifficultyBeatmap* difficultyBeatmap, GlobalNamespace::LeaderboardTableView* tableView,

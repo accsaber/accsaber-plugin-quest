@@ -19,14 +19,14 @@ using namespace AccSaber::Utils::Constants;
 extern AccSaber::UI::Leaderboard::CustomLeaderboard leaderboard;
 
 namespace AccSaber::Downloaders{
-    void DownloadLeaderboardAsync(GlobalNamespace::IDifficultyBeatmap* beatmap, int scope, int page, std::function<void(std::optional<std::vector<Models::AccSaberLeaderboardEntry>>)> callback){
+    void DownloadLeaderboardAsync(IDifficultyBeatmap* beatmap, int scope, int page, std::function<void(std::optional<std::vector<Models::AccSaberLeaderboardEntry>>)> callback){
         std::string beatmapString;
         std::string URL;
         std::string hash = static_cast<std::string>(beatmap->get_level()->i_IPreviewBeatmapLevel()->get_levelID()).substr(13);
         std::string difficulty = Utils::GetDifficultyName(beatmap->get_difficulty());
         std::string characteristic = beatmap->get_parentDifficultyBeatmapSet()->get_beatmapCharacteristic()->serializedName;
         beatmapString = string_format("%s/%s/%s", hash.c_str(), characteristic.c_str(), difficulty.c_str());
-        std::string scopeType = scope == 0 ? PAGINATION_PAGE + std::to_string(page) + PAGINATION_PAGESIZE + "10" : AROUND_ME + (leaderboard.player.playerId);
+        std::string scopeType = scope == 0 ? PAGINATION_PAGE + std::to_string(page) + PAGINATION_PAGESIZE + "10" : AROUND_ME + (leaderboard.playerCategoryData[0].playerId);
         URL = API_URL + LEADERBOARDS_ENDPOINT + beatmapString + scopeType;
         DEBUG("{}", URL);
 

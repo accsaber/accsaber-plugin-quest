@@ -1,5 +1,14 @@
 <bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://raw.githubusercontent.com/RedBrumbler/Quest-BSML-Docs/gh-pages/schema.xsd'>
-
+  
+  <stack pref-width='91' pref-height='8' vertical-fit="PreferredSize" horizontal-fit="PreferredSize" anchor-pos-y="41.5">
+    <horizontal min-width="9" horizontal-fit="PreferredSize" pref-height="8" bg="title-gradient" bg-color="~standardAccColor"></horizontal>
+    <horizontal pref-width="91" pref-height="8" anchor-pos-y="41.5" horizontal-fit="PreferredSize" spacing="5">
+      <horizontal min-width="42" pref-height="8" bg="title-gradient" background-color0="~techAccColor" background-color1="~standardAccColor"></horizontal>
+      <horizontal min-width="42" pref-height="8" bg="title-gradient" background-color0="~standardAccColor" background-color1="~trueAccColor"></horizontal>
+    </horizontal>
+    <text id="categoryDisplayName" text="UNRANKED" font-size="6" align="Midline" italics="true"/>
+  </stack>
+  
   <!-- Leaderboard scrollers -->
   <bg anchor-pos-x="-40" anchor-pos-y="-15">
     <page-button icon="accsaber_carat_png" on-click="OnPageUp" id="up_button" dir="Up" anchor-pos-y="12" pref-width="10" pref-height="10"/>

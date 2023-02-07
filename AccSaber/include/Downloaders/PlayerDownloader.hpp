@@ -5,5 +5,5 @@
 #include <string>
 
 namespace AccSaber::Downloaders{
-    void DownloadPlayerInfoAsync(std::string playerId, std::function<void(std::optional<Models::AccSaberUserModel>)> callback);
+    void DownloadPlayerInfoAsync(std::string playerId, std::string category, std::function<void(std::optional<Models::AccSaberUserModel>)> callback);
 }

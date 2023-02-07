@@ -17,8 +17,9 @@ std::optional<T> GetValue(rapidjson::GenericObject<false, rapidjson::Value>& obj
 }
 
 namespace AccSaber::Downloaders{
-    void DownloadPlayerInfoAsync(std::string playerId, std::function<void(std::optional<Models::AccSaberUserModel>)> callback){
-     Utils::SendWebRequest(API_URL + PLAYERS_ENDPOINT + playerId, [callback](std::string response){
+    void DownloadPlayerInfoAsync(std::string playerId, std::string category, std::function<void(std::optional<Models::AccSaberUserModel>)> callback){
+        Utils::SendWebRequest(API_URL + PLAYERS_ENDPOINT + playerId + category, [category, callback](std::string response){
+            DEBUG("this is a response from category: {}", category);
             Document document;
             document.Parse(response.c_str());
             if (document.HasMember("errorCode") || document.Empty()) return callback({});            
